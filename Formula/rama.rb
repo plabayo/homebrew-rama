@@ -5,8 +5,8 @@ class Rama < Formula
     desc "move and transform network packets with rama"
     homepage "https://ramaproxy.org"
     url "https://github.com/plabayo/rama/releases/download/0.2.0-alpha.8/rama.aarch64-apple-darwin.tar.xz"
-    sha256 "62da5392b367e37ff5b9db5902855ff1bf1a9912a8787558349b8648ae911fa9"
-    version "0.2.0-alpha.15"
+    sha256 "8ec856d67c17bdeb6fc666cb2f3abf95f53c9929be49efd92b10731b78136eae"
+    version "0.2.0"
   
     def install
       bin.install "rama"
