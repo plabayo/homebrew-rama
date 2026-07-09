@@ -114,34 +114,40 @@ def render_formula(version:, assets:, versioned: false)
   klass = versioned ? formula_class_for_versioned(version) : "Rama"
   livecheck_regex = if versioned
     minor = Regexp.escape(stable_minor(version))
-    %r{href=.*?/releases/tag/rama[._-]v?(#{minor}\.\d+)["' >]}i.inspect
+    "regex(%r{href=.*?/releases/tag/rama[._-]v?(#{minor}\\.\\d+)[\"' >]}i)"
   else
-    %r{href=.*?/releases/tag/rama[._-]v?(\d+(?:\.\d+)+)["' >]}i.inspect
+    "regex(%r{href=.*?/releases/tag/rama[._-]v?(\\d+(?:\\.\\d+)+)[\"' >]}i)"
   end
 
   <<~RUBY
     class #{klass} < Formula
       desc "Move and transform network packets"
       homepage "https://ramaproxy.org"
+      url "#{assets.fetch(:arm).fetch(:url)}"
+      sha256 "#{assets.fetch(:arm).fetch(:sha256)}"
       version "#{version}"
       license "MIT"
 
-      url "#{assets.fetch(:arm).fetch(:url)}"
-      sha256 "#{assets.fetch(:arm).fetch(:sha256)}"
-
       on_intel do
-        url "#{assets.fetch(:intel).fetch(:url)}"
-        sha256 "#{assets.fetch(:intel).fetch(:sha256)}"
+        resource "rama-intel" do
+          url "#{assets.fetch(:intel).fetch(:url)}"
+          sha256 "#{assets.fetch(:intel).fetch(:sha256)}"
+        end
       end
 
       depends_on :macos
     #{versioned ? "\n  keg_only :versioned_formula\n" : ""}
       livecheck do
         url "https://github.com/#{OWNER}/#{REPO}/releases"
-        regex(#{livecheck_regex})
+        #{livecheck_regex}
       end
 
       def install
+        if Hardware::CPU.intel?
+          resource("rama-intel").stage { bin.install "rama" }
+          return
+        end
+
         bin.install "rama"
       end
 

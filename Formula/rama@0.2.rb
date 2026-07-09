@@ -1,15 +1,16 @@
 class RamaAT02 < Formula
   desc "Move and transform network packets"
   homepage "https://ramaproxy.org"
+  url "https://github.com/plabayo/rama/releases/download/rama-0.2.0/rama.aarch64-apple-darwin.tar.xz"
+  sha256 "8ec856d67c17bdeb6fc666cb2f3abf95f53c9929be49efd92b10731b78136eae"
   version "0.2.0"
   license "MIT"
 
-  url "https://github.com/plabayo/rama/releases/download/rama-0.2.0/rama.aarch64-apple-darwin.tar.xz"
-  sha256 "8ec856d67c17bdeb6fc666cb2f3abf95f53c9929be49efd92b10731b78136eae"
-
   on_intel do
-    url "https://github.com/plabayo/rama/releases/download/rama-0.2.0/rama.x86_64-apple-darwin.tar.xz"
-    sha256 "0d43f691e4b4aa235f569d4a8df91861a95340f388a9c6d3fe804a23693606f8"
+    resource "rama-intel" do
+      url "https://github.com/plabayo/rama/releases/download/rama-0.2.0/rama.x86_64-apple-darwin.tar.xz"
+      sha256 "0d43f691e4b4aa235f569d4a8df91861a95340f388a9c6d3fe804a23693606f8"
+    end
   end
 
   depends_on :macos
@@ -18,10 +19,15 @@ class RamaAT02 < Formula
 
   livecheck do
     url "https://github.com/plabayo/rama/releases"
-    regex(/href=.*?\/releases\/tag\/rama[._-]v?(0\.2\.\d+)["' >]/i)
+    regex(%r{href=.*?/releases/tag/rama[._-]v?(0\.2\.\d+)["' >]}i)
   end
 
   def install
+    if Hardware::CPU.intel?
+      resource("rama-intel").stage { bin.install "rama" }
+      return
+    end
+
     bin.install "rama"
   end
 
