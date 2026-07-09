@@ -1,0 +1,63 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Test (${{ matrix.runner }})
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        runner:
+          - macos-15
+          - macos-15-intel
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Show Homebrew config
+        run: brew config
+
+      - name: Tap checkout
+        run: brew tap --custom-remote plabayo/rama "${GITHUB_WORKSPACE}"
+
+      - name: Style
+        run: |
+          formulae=(plabayo/rama/rama)
+          for formula in "${GITHUB_WORKSPACE}"/Formula/rama@*.rb; do
+            [[ -e "${formula}" ]] || continue
+            formulae+=("plabayo/rama/$(basename "${formula}" .rb)")
+          done
+          brew style "${formulae[@]}"
+
+      - name: Audit
+        run: |
+          formulae=(plabayo/rama/rama)
+          for formula in "${GITHUB_WORKSPACE}"/Formula/rama@*.rb; do
+            [[ -e "${formula}" ]] || continue
+            formulae+=("plabayo/rama/$(basename "${formula}" .rb)")
+          done
+          brew audit --strict --online --formula "${formulae[@]}"
+
+      - name: Install latest
+        run: brew install plabayo/rama/rama
+
+      - name: Test latest
+        run: brew test plabayo/rama/rama
+
+      - name: Install versioned formulae
+        run: |
+          for formula in "${GITHUB_WORKSPACE}"/Formula/rama@*.rb; do
+            name="$(basename "${formula}" .rb)"
+            brew install "plabayo/rama/${name}"
+            brew test "plabayo/rama/${name}"
+          done

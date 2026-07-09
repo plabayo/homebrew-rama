@@ -1,0 +1,96 @@
+name: Update Rama Formulae
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Rama version or release tag to package. Use 'latest' for the newest stable release."
+        required: true
+        default: latest
+      versioned:
+        description: "Maintain previous stable minor formulae such as rama@0.2."
+        required: true
+        type: boolean
+        default: true
+  repository_dispatch:
+    types:
+      - rama-release
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update:
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Resolve inputs
+        id: inputs
+        env:
+          WORKFLOW_VERSION: ${{ inputs.version }}
+          WORKFLOW_VERSIONED: ${{ inputs.versioned }}
+          DISPATCH_VERSION: ${{ github.event.client_payload.version }}
+          DISPATCH_VERSIONED: ${{ github.event.client_payload.versioned }}
+        run: |
+          VERSION="${DISPATCH_VERSION:-${WORKFLOW_VERSION:-latest}}"
+          VERSIONED="${DISPATCH_VERSIONED:-${WORKFLOW_VERSIONED:-true}}"
+          echo "version=${VERSION}" >> "${GITHUB_OUTPUT}"
+          echo "versioned=${VERSIONED}" >> "${GITHUB_OUTPUT}"
+
+      - name: Update formulae
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          args=(--version "${{ steps.inputs.outputs.version }}")
+          if [[ "${{ steps.inputs.outputs.versioned }}" == "true" ]]; then
+            args+=(--versioned)
+          else
+            args+=(--no-versioned)
+          fi
+          ruby scripts/update-formula.rb "${args[@]}"
+
+      - name: Resolve formula version
+        id: formula
+        run: |
+          VERSION="$(ruby -ne 'if $_ =~ /^\s*version "([^"]+)"/; puts Regexp.last_match(1); exit; end' Formula/rama.rb)"
+          echo "version=${VERSION}" >> "${GITHUB_OUTPUT}"
+
+      - name: Show diff
+        run: git diff -- Formula scripts README.md .github/workflows
+
+      - name: Open pull request
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.formula.outputs.version }}
+        run: |
+          if git diff --quiet; then
+            echo "No formula changes needed."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          BRANCH="automation/rama-${VERSION#rama-}"
+          git checkout -B "${BRANCH}"
+          git add Formula scripts/update-formula.rb README.md .github/workflows
+          git commit -m "Update Rama Homebrew formulae for ${VERSION}"
+          git push --force-with-lease origin "${BRANCH}"
+
+          if gh pr view "${BRANCH}" --json number >/dev/null 2>&1; then
+            gh pr edit "${BRANCH}" \
+              --title "Update Rama Homebrew formulae for ${VERSION}" \
+              --body "Automated Homebrew update for Rama ${VERSION}."
+          else
+            gh pr create \
+              --base main \
+              --head "${BRANCH}" \
+              --title "Update Rama Homebrew formulae for ${VERSION}" \
+              --body "Automated Homebrew update for Rama ${VERSION}."
+          fi
