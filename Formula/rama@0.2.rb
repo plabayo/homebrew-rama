@@ -13,14 +13,14 @@ class RamaAT02 < Formula
     end
   end
 
-  depends_on :macos
-
-  keg_only :versioned_formula
-
   livecheck do
     url "https://github.com/plabayo/rama/releases"
     regex(%r{href=.*?/releases/tag/rama[._-]v?(0\.2\.\d+)["' >]}i)
   end
+
+  depends_on :macos
+
+  keg_only :versioned_formula
 
   def install
     if Hardware::CPU.intel?

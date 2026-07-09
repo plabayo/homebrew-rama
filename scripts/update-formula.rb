@@ -135,13 +135,13 @@ def render_formula(version:, assets:, versioned: false)
         end
       end
 
-      depends_on :macos
-    #{versioned ? "\n  keg_only :versioned_formula\n" : ""}
       livecheck do
         url "https://github.com/#{OWNER}/#{REPO}/releases"
         #{livecheck_regex}
       end
 
+      depends_on :macos
+    #{versioned ? "\n  keg_only :versioned_formula\n" : ""}
       def install
         if Hardware::CPU.intel?
           resource("rama-intel").stage { bin.install "rama" }

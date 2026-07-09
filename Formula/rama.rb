@@ -13,12 +13,12 @@ class Rama < Formula
     end
   end
 
-  depends_on :macos
-
   livecheck do
     url "https://github.com/plabayo/rama/releases"
     regex(%r{href=.*?/releases/tag/rama[._-]v?(\d+(?:\.\d+)+)["' >]}i)
   end
+
+  depends_on :macos
 
   def install
     if Hardware::CPU.intel?
