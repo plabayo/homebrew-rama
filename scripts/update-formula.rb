@@ -128,16 +128,16 @@ def render_formula(version:, assets:, versioned: false)
       sha256 "#{assets.fetch(:arm).fetch(:sha256)}"
       license "MIT"
 
+      livecheck do
+        url "https://github.com/#{OWNER}/#{REPO}/releases"
+        #{livecheck_regex}
+      end
+
       resource "rama-intel" do
         on_intel do
           url "#{assets.fetch(:intel).fetch(:url)}"
           sha256 "#{assets.fetch(:intel).fetch(:sha256)}"
         end
-      end
-
-      livecheck do
-        url "https://github.com/#{OWNER}/#{REPO}/releases"
-        #{livecheck_regex}
       end
 
       depends_on :macos
