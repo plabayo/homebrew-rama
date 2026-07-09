@@ -124,12 +124,12 @@ def render_formula(version:, assets:, versioned: false)
       desc "Move and transform network packets"
       homepage "https://ramaproxy.org"
       url "#{assets.fetch(:arm).fetch(:url)}"
-      sha256 "#{assets.fetch(:arm).fetch(:sha256)}"
       version "#{version}"
+      sha256 "#{assets.fetch(:arm).fetch(:sha256)}"
       license "MIT"
 
-      on_intel do
-        resource "rama-intel" do
+      resource "rama-intel" do
+        on_intel do
           url "#{assets.fetch(:intel).fetch(:url)}"
           sha256 "#{assets.fetch(:intel).fetch(:sha256)}"
         end
