@@ -124,7 +124,6 @@ def render_formula(version:, assets:, versioned: false)
       desc "Move and transform network packets"
       homepage "https://ramaproxy.org"
       url "#{assets.fetch(:arm).fetch(:url)}"
-      version "#{version}"
       sha256 "#{assets.fetch(:arm).fetch(:sha256)}"
       license "MIT"
 

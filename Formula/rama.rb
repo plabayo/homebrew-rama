@@ -2,7 +2,6 @@ class Rama < Formula
   desc "Move and transform network packets"
   homepage "https://ramaproxy.org"
   url "https://github.com/plabayo/rama/releases/download/rama-0.3.0/rama.aarch64-apple-darwin.tar.xz"
-  version "0.3.0"
   sha256 "9d70fb9b80fdcf42f474605defc3a6609bad81b5b91b16695f25a07b8be0d899"
   license "MIT"
 
