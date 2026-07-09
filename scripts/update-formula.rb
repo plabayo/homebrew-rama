@@ -133,6 +133,8 @@ def render_formula(version:, assets:, versioned: false)
         #{livecheck_regex}
       end
 
+    #{versioned ? "  keg_only :versioned_formula\n\n" : ""}  depends_on :macos
+
       resource "rama-intel" do
         on_intel do
           url "#{assets.fetch(:intel).fetch(:url)}"
@@ -140,8 +142,6 @@ def render_formula(version:, assets:, versioned: false)
         end
       end
 
-      depends_on :macos
-    #{versioned ? "\n  keg_only :versioned_formula\n" : ""}
       def install
         if Hardware::CPU.intel?
           resource("rama-intel").stage { bin.install "rama" }

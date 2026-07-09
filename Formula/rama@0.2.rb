@@ -11,16 +11,16 @@ class RamaAT02 < Formula
     regex(%r{href=.*?/releases/tag/rama[._-]v?(0\.2\.\d+)["' >]}i)
   end
 
+  keg_only :versioned_formula
+
+  depends_on :macos
+
   resource "rama-intel" do
     on_intel do
       url "https://github.com/plabayo/rama/releases/download/rama-0.2.0/rama.x86_64-apple-darwin.tar.xz"
       sha256 "0d43f691e4b4aa235f569d4a8df91861a95340f388a9c6d3fe804a23693606f8"
     end
   end
-
-  depends_on :macos
-
-  keg_only :versioned_formula
 
   def install
     if Hardware::CPU.intel?
