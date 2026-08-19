@@ -58,7 +58,7 @@ jobs:
       - name: Resolve formula version
         id: formula
         run: |
-          VERSION="$(ruby -ne 'if $_ =~ /^\s*version "([^"]+)"/; puts Regexp.last_match(1); exit; end' Formula/rama.rb)"
+          VERSION="$(ruby -ne 'if $_ =~ %r{/releases/download/rama-([^/]+)/}; puts Regexp.last_match(1); exit; end' Formula/rama.rb)"
           echo "version=${VERSION}" >> "${GITHUB_OUTPUT}"
 
       - name: Show diff
