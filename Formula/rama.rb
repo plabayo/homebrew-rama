@@ -2,7 +2,7 @@ class Rama < Formula
   desc "Move and transform network packets"
   homepage "https://ramaproxy.org"
   url "https://github.com/plabayo/rama/releases/download/rama-0.4.0/rama.aarch64-apple-darwin.tar.xz"
-  sha256 "ec0be309c3f0cd05117b365a965aa15d6fe807aa61afce1fd6cbd7c14592a675"
+  sha256 "0483f9a7928a1eb561f15a3ba384334d1606ab0ed3cb4533cef7af543564df65"
   license "MIT"
 
   livecheck do
@@ -15,7 +15,7 @@ class Rama < Formula
   resource "rama-intel" do
     on_intel do
       url "https://github.com/plabayo/rama/releases/download/rama-0.4.0/rama.x86_64-apple-darwin.tar.xz"
-      sha256 "f82c699108133026c172f4728b0156eb8a1933ede7571e71699c64ad4057617e"
+      sha256 "1558de74ab46e5f0b877ecb45048e40802256a98fdbd93b7437e64f066ca020e"
     end
   end
 
