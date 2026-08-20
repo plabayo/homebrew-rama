@@ -1,6 +1,8 @@
 name: Update Rama Formulae
 
 on:
+  schedule:
+    - cron: "23 */6 * * *"
   workflow_dispatch:
     inputs:
       version:

@@ -1,21 +1,23 @@
-class Rama < Formula
+class RamaAT03 < Formula
   desc "Move and transform network packets"
   homepage "https://ramaproxy.org"
-  url "https://github.com/plabayo/rama/releases/download/rama-0.4.0/rama.aarch64-apple-darwin.tar.xz"
-  sha256 "ec0be309c3f0cd05117b365a965aa15d6fe807aa61afce1fd6cbd7c14592a675"
+  url "https://github.com/plabayo/rama/releases/download/rama-0.3.0/rama.aarch64-apple-darwin.tar.xz"
+  sha256 "9d70fb9b80fdcf42f474605defc3a6609bad81b5b91b16695f25a07b8be0d899"
   license "MIT"
 
   livecheck do
     url "https://github.com/plabayo/rama/releases"
-    regex(%r{href=.*?/releases/tag/rama[._-]v?(\d+(?:\.\d+)+)["' >]}i)
+    regex(%r{href=.*?/releases/tag/rama[._-]v?(0\.3\.\d+)["' >]}i)
   end
+
+  keg_only :versioned_formula
 
   depends_on :macos
 
   resource "rama-intel" do
     on_intel do
-      url "https://github.com/plabayo/rama/releases/download/rama-0.4.0/rama.x86_64-apple-darwin.tar.xz"
-      sha256 "f82c699108133026c172f4728b0156eb8a1933ede7571e71699c64ad4057617e"
+      url "https://github.com/plabayo/rama/releases/download/rama-0.3.0/rama.x86_64-apple-darwin.tar.xz"
+      sha256 "8dba0f012da6e2242d254373abab62c9246dca0f712e2849510619f3d7af7a51"
     end
   end
 
